@@ -4,6 +4,8 @@ import _comments from  "./comments.js";
 import _friends from  "./friends.js";
 import _likes from  "./likes.js";
 import _photos from  "./photos.js";
+import _room_chat from  "./room_chat.js";
+import _room_user from  "./room_user.js";
 import _save_photo from  "./save_photo.js";
 import _users from  "./users.js";
 
@@ -12,6 +14,8 @@ export default function initModels(sequelize) {
   const friends = _friends.init(sequelize, DataTypes);
   const likes = _likes.init(sequelize, DataTypes);
   const photos = _photos.init(sequelize, DataTypes);
+  const room_chat = _room_chat.init(sequelize, DataTypes);
+  const room_user = _room_user.init(sequelize, DataTypes);
   const save_photo = _save_photo.init(sequelize, DataTypes);
   const users = _users.init(sequelize, DataTypes);
 
@@ -25,20 +29,25 @@ export default function initModels(sequelize) {
   photos.hasMany(likes, { as: "likes", foreignKey: "photo_id"});
   save_photo.belongsTo(photos, { as: "photo", foreignKey: "photo_id"});
   photos.hasMany(save_photo, { as: "save_photos", foreignKey: "photo_id"});
+  room_user.belongsTo(room_chat, { as: "room", foreignKey: "room_id"});
+  room_chat.hasMany(room_user, { as: "room_users", foreignKey: "room_id"});
   comments.belongsTo(users, { as: "user", foreignKey: "user_id"});
   users.hasMany(comments, { as: "comments", foreignKey: "user_id"});
   likes.belongsTo(users, { as: "user", foreignKey: "user_id"});
   users.hasMany(likes, { as: "likes", foreignKey: "user_id"});
   photos.belongsTo(users, { as: "user", foreignKey: "user_id"});
   users.hasMany(photos, { as: "photos", foreignKey: "user_id"});
+  room_user.belongsTo(users, { as: "user", foreignKey: "user_id"});
+  users.hasMany(room_user, { as: "room_users", foreignKey: "user_id"});
   save_photo.belongsTo(users, { as: "user", foreignKey: "user_id"});
   users.hasMany(save_photo, { as: "save_photos", foreignKey: "user_id"});
-
   return {
     comments,
     friends,
     likes,
     photos,
+    room_chat,
+    room_user,
     save_photo,
     users,
   };
