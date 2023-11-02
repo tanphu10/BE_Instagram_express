@@ -11,9 +11,9 @@ import { checkApi } from "../config/jwt.js";
 
 const userRoute = express.Router();
 // đăng kí
-userRoute.post("/sign-up-user", checkApi, userSignUp);
+userRoute.post("/sign-up-user", userSignUp);
 //  đăng nhập
-userRoute.get("/log-in-user", checkApi, userLogIn);
+userRoute.get("/log-in-user", userLogIn);
 //  tìm kiếm theo tên người dùng
 userRoute.get("/search/:name", checkApi, searchUser);
 // upload avatar

@@ -13,7 +13,7 @@ const userSignUp = async (req, res) => {
   let checkEmail = await model.users.findAll({
     where: { email },
   });
-  console.log("checkEmail", checkEmail);
+  // console.log("checkEmail", checkEmail);
   if (checkEmail.length) {
     res.send("email đã tồn tại");
     return;
@@ -39,14 +39,14 @@ const userLogIn = async (req, res) => {
   let checkEmail = await model.users.findOne({
     where: { email },
   });
-  console.log("checkEmail", checkEmail);
+  // console.log("checkEmail", checkEmail);
   if (checkEmail) {
     let checkPass = bcrypt.compareSync(pass_word, checkEmail.pass_word);
     console.log("checkPass", checkPass);
     //  check passcle
     if (checkPass) {
       let token = createToken({ checkEmail });
-      console.log(token);
+      // console.log(token);
       res.status(200).send(token);
     } else {
       res.send("pass_word không đúng");
@@ -65,7 +65,7 @@ const searchUser = async (req, res) => {
       full_name: { [Op.like]: `%${name}%` },
     },
   });
-  res.send(data);
+  res.status(200).send(data);
 };
 
 /* 4. upload avatar */
@@ -75,13 +75,13 @@ const uploadAvatar = async (req, res) => {
   let { token } = req.headers;
   let infoUser = decodeToken(token);
   let { id } = infoUser.data.checkEmail;
-  console.log("id", id);
   let getUser = await model.users.findByPk(id);
-  // console.log(getUser);
+  console.log(getUser);
   let updateUser = { ...getUser, avatar: file.filename };
   await model.users.update(updateUser, { where: { id } });
   res.send(file);
 };
+
 /* 5.update thông tin user */
 const updateInfoUser = async (req, res) => {
   let data = req.body;
