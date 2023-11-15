@@ -13,7 +13,6 @@ const userSignUp = async (req, res) => {
   let checkEmail = await model.users.findAll({
     where: { email },
   });
-  // console.log("checkEmail", checkEmail);
   if (checkEmail.length) {
     res.send("email đã tồn tại");
     return;
@@ -39,14 +38,11 @@ const userLogIn = async (req, res) => {
   let checkEmail = await model.users.findOne({
     where: { email },
   });
-  // console.log("checkEmail", checkEmail);
   if (checkEmail) {
     let checkPass = bcrypt.compareSync(pass_word, checkEmail.pass_word);
-    console.log("checkPass", checkPass);
     //  check passcle
     if (checkPass) {
       let token = createToken({ checkEmail });
-      // console.log(token);
       res.status(200).send(token);
     } else {
       res.send("pass_word không đúng");
@@ -59,24 +55,25 @@ const userLogIn = async (req, res) => {
 let Op = Sequelize.Op;
 const searchUser = async (req, res) => {
   let { name } = req.params;
-  console.log(name);
   let data = await model.users.findAll({
     where: {
       full_name: { [Op.like]: `%${name}%` },
     },
   });
-  res.status(200).send(data);
+  if (data.length > 0) {
+    res.status(200).send(data);
+  } else {
+    res.send("không tìm thấy data");
+  }
 };
 
 /* 4. upload avatar */
 const uploadAvatar = async (req, res) => {
   let file = req.file;
-  console.log("file", file);
   let { token } = req.headers;
   let infoUser = decodeToken(token);
   let { id } = infoUser.data.checkEmail;
   let getUser = await model.users.findByPk(id);
-  console.log(getUser);
   let updateUser = { ...getUser, avatar: file.filename };
   await model.users.update(updateUser, { where: { id } });
   res.send(file);
@@ -86,7 +83,6 @@ const uploadAvatar = async (req, res) => {
 const updateInfoUser = async (req, res) => {
   let data = req.body;
   let { full_name, old, email, pass_word, role } = data;
-  console.log(data);
   let { token } = req.headers;
   let infoUser = decodeToken(token);
   let { id, face_app_id, avatar } = infoUser.data.checkEmail;

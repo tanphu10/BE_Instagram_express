@@ -18,20 +18,32 @@ const getAllComment = async (req, res) => {
 
 const postComment = async (req, res) => {
   let data = req.body;
-  console.log("data", data);
-  await model.comments.create(data);
-  res.send("thêm bình luận thành công");
+  console.log(data);
+  let { photo_id } = data;
+  // check có hình này trong photo chưa
+  let dataPhoto = await model.photos.findAll({ where: { photo_id } });
+  // console.log(dataPhoto);
+  if (dataPhoto.length > 0) {
+    await model.comments.create(data);
+    res.send("thêm bình luận thành công");
+  } else {
+    res.send("hình này không tồn tại trong database");
+  }
 };
 
 const deleteComment = async (req, res) => {
   let { id } = req.params;
-  await model.comments.destroy({ where: { comment_id: id } });
-  res.send("đã xóa thành công");
+  let data = await model.comments.findAll({ where: { comment_id: id } });
+  if (data.length > 0) {
+    await model.comments.destroy({ where: { comment_id: id } });
+    res.send("đã xóa thành công");
+  } else {
+    res.send("không có comment này trong data");
+  }
 };
 const updateComment = async (req, res) => {
   let data = req.body;
   let { comment_id } = data;
-  console.log(data);
   await model.comments.update(data, {
     where: {
       comment_id,

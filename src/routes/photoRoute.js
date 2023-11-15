@@ -4,7 +4,7 @@ import {
   getPhotoByName,
   getPhotoUserId,
   getPhotoById,
-  postPhoto,
+  uploadImage,
   deletePhoto,
   verifyPhoto,
   getSavePhoto,
@@ -22,7 +22,7 @@ photoRoute.get("/get-photo-by-user/:userId", checkApi, getPhotoUserId);
 // lấy ảnh theo id ảnh
 photoRoute.get("/get-photo-by-id/:id", checkApi, getPhotoById);
 // thêm hình và status
-photoRoute.post("/post-photo", checkApi, upload.array("file"), postPhoto);
+photoRoute.post("/upload-image", checkApi, upload.single("file"), uploadImage);
 // xóa hình ảnh
 photoRoute.delete("/delete-photo/:id", checkApi, deletePhoto);
 // // get verify photo
